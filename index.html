@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hamsters &amp; Cie</title>
+<meta name="description" content="Hamsters &amp; Cie : un jeu d'élevage cosy pour Android. Gratuit, sans publicité, sans achat.">
+<!--
+  ═══════════════════════════════════════════════════════════════════
+  À RÉGLER AVANT DE METTRE EN LIGNE (3 valeurs, tout en bas du fichier,
+  dans le bloc « CONFIG ») :
+    1. kofi   : l'adresse de votre page Ko-fi
+    2. email  : une adresse de contact (elle sera visible de tous)
+    3. play   : l'adresse du jeu sur Google Play (déjà remplie)
+
+  FACULTATIF, à poser à côté de ce fichier :
+    - icone.png              la vraie icône du jeu (512 × 512) ;
+                             sans elle, un dessin de remplacement s'affiche
+    - captures/1.png … 6.png des captures du jeu ; sans elles, la rubrique
+                             « Captures » ne s'affiche pas
+
+  Cette page ne charge rien depuis un autre site (ni police, ni script,
+  ni outil de suivi) : c'est ce que dit sa politique de confidentialité.
+  ═══════════════════════════════════════════════════════════════════
+-->
+<style>
+:root{
+  --bg:#F6EEDD; --card:#FFFBF2; --edge:#E8D9BC; --text:#3E2A1A; --muted:#5A4330;
+  --green:#3D7F24; --green-d:#24511A; --gold:#F2B33D; --gold-d:#C98A1C; --gold-bg:#FCEBC4;
+  --sky1:#9FD3EF; --sky2:#E3F1F8; --hill1:#A6D27A; --hill2:#8DC062; --link:#2F6A1C;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#2A211A; --card:#36291F; --edge:#5A4634; --text:#F6EEDD; --muted:#DCCBB3;
+    --gold-bg:#4A3A1E; --sky1:#22394B; --sky2:#35546A; --hill1:#3F6B2C; --hill2:#335A23; --link:#A6D27A;
+  }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--text);
+  font-family:"Nunito",ui-rounded,"Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+  font-size:17px;line-height:1.55;font-weight:600}
+a{color:var(--link)}
+h1,h2,h3{font-family:"Fredoka",ui-rounded,"Segoe UI",system-ui,sans-serif;line-height:1.15;margin:0}
+.wrap{max-width:860px;margin:0 auto;padding:0 16px}
+
+/* Barre du haut */
+.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;padding:10px 0}
+.nav{display:flex;flex-wrap:wrap;gap:4px}
+.nav a{display:inline-flex;align-items:center;min-height:44px;padding:0 12px;border-radius:12px;
+  color:var(--text);text-decoration:none;font-weight:800}
+.nav a:hover{background:var(--card)}
+.langs{display:flex;flex-wrap:wrap;gap:4px}
+.langs button{min-width:44px;min-height:44px;padding:0 8px;border:2px solid var(--edge);border-radius:12px;
+  background:var(--card);color:var(--text);font:inherit;font-weight:800;font-size:14px;cursor:pointer}
+.langs button[aria-pressed="true"]{background:var(--green);border-color:var(--green-d);color:#fff}
+
+/* En-tête illustré */
+.hero{position:relative;overflow:hidden;border-radius:28px;border:3px solid var(--edge);
+  background:linear-gradient(var(--sky1),var(--sky2));text-align:center;padding:36px 20px 150px}
+.hero svg.hills{position:absolute;left:0;bottom:0;width:100%;height:150px;display:block}
+.hero .inner{position:relative}
+.icon{width:112px;height:112px;margin:0 auto 14px;border-radius:28px;border:4px solid #fff;overflow:hidden;
+  box-shadow:0 4px 0 rgba(62,42,26,.18);background:#3D7F24}
+.icon img,.icon svg{display:block;width:100%;height:100%}
+.hero h1{font-size:clamp(34px,7vw,52px);color:#3E2A1A}
+.hero p.tag{max-width:520px;margin:10px auto 20px;color:#3E2A1A;font-size:19px;font-weight:700}
+@media (prefers-color-scheme: dark){.hero h1,.hero p.tag{color:#F6EEDD}}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:56px;padding:0 26px;
+  border-radius:18px;font-family:"Fredoka",ui-rounded,"Segoe UI",system-ui,sans-serif;font-size:20px;
+  font-weight:700;text-decoration:none}
+.btn.green{background:var(--green);color:#fff;border:2.5px solid var(--green-d);box-shadow:0 4px 0 var(--green-d)}
+.btn.gold{background:var(--gold);color:#3E2A1A;border:2.5px solid var(--gold-d);box-shadow:0 4px 0 var(--gold-d)}
+.btn:active{transform:translateY(2px)}
+.badges{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:18px 0 0;padding:0;list-style:none}
+.badges li{padding:5px 12px;border-radius:999px;background:var(--card);border:2px solid var(--edge);
+  font-size:14px;font-weight:800;color:var(--text)}
+
+/* Rubriques */
+section{margin:40px 0}
+section>h2{font-size:30px;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:1fr;gap:16px}
+@media (min-width:640px){.grid{grid-template-columns:1fr 1fr}}
+.card{background:var(--card);border:3px solid var(--edge);border-radius:20px;box-shadow:0 4px 0 var(--edge);padding:18px}
+.card h3{font-size:21px;margin-bottom:6px}
+.card p{margin:0;color:var(--muted)}
+.more{margin:18px 2px 0;color:var(--muted)}
+.shots{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px}
+.shots img{height:420px;width:auto;border-radius:18px;border:3px solid var(--edge);flex:none}
+.support{background:var(--gold-bg);border-color:var(--gold-d);box-shadow:0 4px 0 var(--gold-d);text-align:center;padding:26px 20px}
+.support p{max-width:560px;margin:10px auto 20px;color:var(--text)}
+.policy ul{margin:10px 0 0;padding-left:22px}
+.policy li{margin:8px 0;color:var(--text)}
+.policy .date{color:var(--muted);font-size:15px;margin:0}
+.policy .contact{margin:14px 0 0}
+footer{margin:40px 0 30px;padding-top:18px;border-top:3px solid var(--edge);color:var(--muted);font-size:15px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="top">
+  <nav class="nav" aria-label="Rubriques">
+    <a href="#jeu" data-t="nav_game">Le jeu</a>
+    <a href="#soutenir" data-t="nav_support">Soutenir</a>
+    <a href="#confidentialite" data-t="nav_privacy">Confidentialité</a>
+  </nav>
+  <div class="langs" role="group" aria-label="Langue / Language">
+    <button type="button" data-lang="fr" aria-label="Français">FR</button>
+    <button type="button" data-lang="en" aria-label="English">EN</button>
+    <button type="button" data-lang="de" aria-label="Deutsch">DE</button>
+    <button type="button" data-lang="es" aria-label="Español">ES</button>
+    <button type="button" data-lang="it" aria-label="Italiano">IT</button>
+    <button type="button" data-lang="pt" aria-label="Português">PT</button>
+  </div>
+</div>
+
+<header class="hero">
+  <svg class="hills" viewBox="0 0 860 150" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 60 Q200 10 430 50 Q660 90 860 36 L860 150 L0 150 Z" fill="var(--hill1)"></path>
+    <path d="M0 104 Q230 56 460 92 Q680 124 860 82 L860 150 L0 150 Z" fill="var(--hill2)"></path>
+  </svg>
+  <div class="inner">
+    <div class="icon">
+      <img src="icone.png" alt="" onerror="this.remove()">
+      <svg viewBox="0 0 96 96" role="img" aria-label="Hamsters &amp; Cie">
+        <rect width="96" height="96" fill="#4C962D"></rect>
+        <circle cx="26" cy="34" r="11" fill="#F6B76E" stroke="#C4712F" stroke-width="2"></circle><circle cx="26" cy="34" r="5.5" fill="#F4A98F"></circle>
+        <circle cx="70" cy="34" r="11" fill="#F6B76E" stroke="#C4712F" stroke-width="2"></circle><circle cx="70" cy="34" r="5.5" fill="#F4A98F"></circle>
+        <ellipse cx="48" cy="60" rx="36" ry="30" fill="#F6B76E" stroke="#C4712F" stroke-width="2"></ellipse>
+        <ellipse cx="48" cy="70" rx="21" ry="15" fill="#FFF1DC"></ellipse>
+        <path d="M43 32 Q48 24 53 32" fill="none" stroke="#C4712F" stroke-width="2" stroke-linecap="round"></path>
+        <circle cx="35" cy="56" r="6" fill="#3E2A1A"></circle><circle cx="33" cy="54" r="2.2" fill="#fff"></circle><circle cx="37.2" cy="58.4" r="1" fill="#fff"></circle>
+        <circle cx="61" cy="56" r="6" fill="#3E2A1A"></circle><circle cx="59" cy="54" r="2.2" fill="#fff"></circle><circle cx="63.2" cy="58.4" r="1" fill="#fff"></circle>
+        <ellipse cx="24" cy="67" rx="6.5" ry="4" fill="#F4A98F" opacity=".7"></ellipse><ellipse cx="72" cy="67" rx="6.5" ry="4" fill="#F4A98F" opacity=".7"></ellipse>
+        <ellipse cx="48" cy="66" rx="3.6" ry="2.6" fill="#B5545C"></ellipse>
+        <path d="M44 70 Q46 73 48 70 Q50 73 52 70" fill="none" stroke="#8A4A1C" stroke-width="1.5" stroke-linecap="round"></path>
+      </svg>
+    </div>
+    <h1 data-t="name">Hamsters &amp; Cie</h1>
+    <p class="tag" data-t="tagline">Un jeu d'élevage cosy pour Android : faites grandir votre élevage, mois après mois.</p>
+    <a class="btn green" id="play" href="#" data-t="cta">Télécharger sur Google Play</a>
+    <ul class="badges">
+      <li data-t="b1">Gratuit</li><li data-t="b2">Sans publicité</li><li data-t="b3">Sans achat</li><li data-t="b4">Sans compte</li>
+    </ul>
+  </div>
+</header>
+
+<section id="jeu">
+  <h2 data-t="game_title">Le jeu</h2>
+  <div class="grid">
+    <div class="card"><h3 data-t="career_t">Carrière</h3><p data-t="career_d">Un élevage sans fin : 20 titres à gagner, des commandes à livrer, des cages et des équipements à débloquer, une réputation à soigner.</p></div>
+    <div class="card"><h3 data-t="camp_t">Campagne</h3><p data-t="camp_d">Dix niveaux en trois chapitres, chacun avec sa leçon et son défi. Visez les trois étoiles !</p></div>
+    <div class="card"><h3 data-t="classic_t">Partie classique</h3><p data-t="classic_d">Le jeu d'origine : 24 mois pour finir le plus riche possible, avec un défi du jour identique pour tous et des codes à partager.</p></div>
+    <div class="card"><h3 data-t="zen_t">Mode Zen</h3><p data-t="zen_d">Sans pression et sans fin : juste le plaisir de voir grandir votre élevage.</p></div>
+  </div>
+  <p class="more" data-t="more">Une petite mascotte vous guide au début, puis vous laisse décider. En français, anglais, allemand, espagnol, italien et portugais.</p>
+</section>
+
+<section id="captures" hidden>
+  <h2 data-t="shots_title">Captures</h2>
+  <div class="shots" id="shots"></div>
+</section>
+
+<section id="soutenir">
+  <div class="card support">
+    <h2 data-t="support_t">Soutenir le jeu</h2>
+    <p data-t="support_d">Hamsters &amp; Cie est gratuit et le restera, sans publicité ni achat. Si le jeu vous plaît, vous pouvez offrir un café au développeur. C'est un don : il ne débloque rien dans le jeu.</p>
+    <a class="btn gold" id="kofi" href="#" rel="noopener" data-t="support_btn">Faire un don sur Ko-fi</a>
+  </div>
+</section>
+
+<section id="confidentialite" class="policy">
+  <h2 data-t="privacy_t">Politique de confidentialité</h2>
+  <p class="date" data-t="updated">Dernière mise à jour : 16 novembre 2026</p>
+  <ul>
+    <li data-t="p1">Hamsters &amp; Cie ne collecte, ne transmet et ne vend aucune donnée personnelle.</li>
+    <li data-t="p2">Le jeu ne contient ni publicité, ni outil de mesure d'audience, ni achat intégré. Il ne demande ni compte ni inscription.</li>
+    <li data-t="p3">Vos parties, vos scores et vos réglages sont enregistrés uniquement sur votre appareil.</li>
+    <li data-t="p4">Si la sauvegarde Android est activée sur votre appareil, Android peut copier ces données sur votre compte Google afin de les restaurer sur un nouvel appareil. Cette sauvegarde est gérée par Google ; le développeur n'y a jamais accès.</li>
+    <li data-t="p5">Le jeu fonctionne sans connexion Internet.</li>
+    <li data-t="p6">Les codes de défi que vous partagez avec vos amis ne contiennent que les réglages d'une partie, et rien sur vous.</li>
+    <li data-t="p7">Les dons sur Ko-fi se font en dehors du jeu, sur le site de Ko-fi, et relèvent de sa propre politique de confidentialité.</li>
+    <li data-t="p8">Cette page web n'utilise ni cookie ni outil de suivi. Elle retient seulement la langue choisie, dans votre navigateur.</li>
+  </ul>
+  <p class="contact"><span data-t="contact">Une question ? Écrivez à :</span> <a id="mail" href="#"></a></p>
+</section>
+
+<footer>
+  <span data-t="credits">Un jeu créé par Marc, adapté par Willy. Musique : « Carefree », Kevin MacLeod (incompetech.com), licence Creative Commons BY 4.0.</span>
+</footer>
+
+</div>
+<script>
+/* ═══════════ CONFIG : les 3 valeurs à régler ═══════════ */
+var CONFIG = {
+  kofi:  'https://ko-fi.com/VOTRE_PSEUDO',
+  email: 'votre-adresse@exemple.fr',
+  play:  'https://play.google.com/store/apps/details?id=com.wili.hamsters'
+};
+/* ═══════════════════════════════════════════════════════ */
+
+var T = {
+fr:{name:"Hamsters & Cie",nav_game:"Le jeu",nav_support:"Soutenir",nav_privacy:"Confidentialité",
+tagline:"Un jeu d'élevage cosy pour Android : faites grandir votre élevage, mois après mois.",
+cta:"Télécharger sur Google Play",b1:"Gratuit",b2:"Sans publicité",b3:"Sans achat",b4:"Sans compte",
+game_title:"Le jeu",
+career_t:"Carrière",career_d:"Un élevage sans fin : 20 titres à gagner, des commandes à livrer, des cages et des équipements à débloquer, une réputation à soigner.",
+camp_t:"Campagne",camp_d:"Dix niveaux en trois chapitres, chacun avec sa leçon et son défi. Visez les trois étoiles !",
+classic_t:"Partie classique",classic_d:"Le jeu d'origine : 24 mois pour finir le plus riche possible, avec un défi du jour identique pour tous et des codes à partager.",
+zen_t:"Mode Zen",zen_d:"Sans pression et sans fin : juste le plaisir de voir grandir votre élevage.",
+more:"Une petite mascotte vous guide au début, puis vous laisse décider. En français, anglais, allemand, espagnol, italien et portugais.",
+shots_title:"Captures",
+support_t:"Soutenir le jeu",support_d:"Hamsters & Cie est gratuit et le restera, sans publicité ni achat. Si le jeu vous plaît, vous pouvez offrir un café au développeur. C'est un don : il ne débloque rien dans le jeu.",
+support_btn:"Faire un don sur Ko-fi",
+privacy_t:"Politique de confidentialité",updated:"Dernière mise à jour : 16 novembre 2026",
+p1:"Hamsters & Cie ne collecte, ne transmet et ne vend aucune donnée personnelle.",
+p2:"Le jeu ne contient ni publicité, ni outil de mesure d'audience, ni achat intégré. Il ne demande ni compte ni inscription.",
+p3:"Vos parties, vos scores et vos réglages sont enregistrés uniquement sur votre appareil.",
+p4:"Si la sauvegarde Android est activée sur votre appareil, Android peut copier ces données sur votre compte Google afin de les restaurer sur un nouvel appareil. Cette sauvegarde est gérée par Google ; le développeur n'y a jamais accès.",
+p5:"Le jeu fonctionne sans connexion Internet.",
+p6:"Les codes de défi que vous partagez avec vos amis ne contiennent que les réglages d'une partie, et rien sur vous.",
+p7:"Les dons sur Ko-fi se font en dehors du jeu, sur le site de Ko-fi, et relèvent de sa propre politique de confidentialité.",
+p8:"Cette page web n'utilise ni cookie ni outil de suivi. Elle retient seulement la langue choisie, dans votre navigateur.",
+contact:"Une question ? Écrivez à :",
+credits:"Un jeu créé par Marc, adapté par Willy. Musique : « Carefree », Kevin MacLeod (incompetech.com), licence Creative Commons BY 4.0."},
+
+en:{name:"Hamsters & Co",nav_game:"The game",nav_support:"Support",nav_privacy:"Privacy",
+tagline:"A cosy breeding game for Android: grow your hamster farm, month after month.",
+cta:"Get it on Google Play",b1:"Free",b2:"No ads",b3:"No purchases",b4:"No account",
+game_title:"The game",
+career_t:"Career",career_d:"An endless farm: 20 titles to earn, orders to deliver, cages and equipment to unlock, and a reputation to look after.",
+camp_t:"Campaign",camp_d:"Ten levels in three chapters, each with its own lesson and challenge. Go for three stars!",
+classic_t:"Classic game",classic_d:"The original game: 24 months to end up as rich as you can, with a daily challenge that is the same for everyone and codes to share.",
+zen_t:"Zen mode",zen_d:"No pressure and no end: just the pleasure of watching your farm grow.",
+more:"A little mascot guides you at first, then lets you decide. In English, French, German, Spanish, Italian and Portuguese.",
+shots_title:"Screenshots",
+support_t:"Support the game",support_d:"Hamsters & Co is free and will stay free, with no ads and no purchases. If you enjoy it, you can buy the developer a coffee. It is a donation: it unlocks nothing in the game.",
+support_btn:"Donate on Ko-fi",
+privacy_t:"Privacy policy",updated:"Last updated: 16 November 2026",
+p1:"Hamsters & Co does not collect, share or sell any personal data.",
+p2:"The game has no ads, no analytics and no in-app purchases. It needs no account and no sign-up.",
+p3:"Your games, scores and settings are stored only on your device.",
+p4:"If Android backup is turned on for your device, Android may copy this data to your Google account so it can be restored on a new device. That backup is run by Google; the developer never has access to it.",
+p5:"The game works without an Internet connection.",
+p6:"The challenge codes you share with friends only hold the settings of a game, and nothing about you.",
+p7:"Donations on Ko-fi are made outside the game, on Ko-fi's website, under Ko-fi's own privacy policy.",
+p8:"This web page uses no cookies and no trackers. It only remembers the language you chose, in your browser.",
+contact:"Any question? Write to:",
+credits:"A game created by Marc, adapted by Willy. Music: “Carefree” by Kevin MacLeod (incompetech.com), Creative Commons BY 4.0 licence."},
+
+de:{name:"Hamster & Co.",nav_game:"Das Spiel",nav_support:"Unterstützen",nav_privacy:"Datenschutz",
+tagline:"Ein gemütliches Zuchtspiel für Android: Lass deine Hamsterzucht Monat für Monat wachsen.",
+cta:"Bei Google Play herunterladen",b1:"Kostenlos",b2:"Keine Werbung",b3:"Keine Käufe",b4:"Kein Konto",
+game_title:"Das Spiel",
+career_t:"Karriere",career_d:"Eine Zucht ohne Ende: 20 Titel, Aufträge zum Ausliefern, Käfige und Ausrüstung zum Freischalten und ein Ruf, der gepflegt werden will.",
+camp_t:"Kampagne",camp_d:"Zehn Level in drei Kapiteln, jedes mit eigener Lektion und Herausforderung. Hol dir alle drei Sterne!",
+classic_t:"Klassisches Spiel",classic_d:"Das Originalspiel: 24 Monate, um so reich wie möglich zu werden, mit einer Tages-Challenge, die für alle gleich ist, und Codes zum Teilen.",
+zen_t:"Zen-Modus",zen_d:"Ohne Druck und ohne Ende: einfach zusehen, wie deine Zucht wächst.",
+more:"Ein kleines Maskottchen führt dich am Anfang und lässt dich dann selbst entscheiden. Auf Deutsch, Englisch, Französisch, Spanisch, Italienisch und Portugiesisch.",
+shots_title:"Screenshots",
+support_t:"Das Spiel unterstützen",support_d:"Hamster & Co. ist kostenlos und bleibt es, ohne Werbung und ohne Käufe. Wenn dir das Spiel gefällt, kannst du dem Entwickler einen Kaffee spendieren. Es ist eine Spende: Sie schaltet im Spiel nichts frei.",
+support_btn:"Auf Ko-fi spenden",
+privacy_t:"Datenschutzerklärung",updated:"Zuletzt aktualisiert: 16. November 2026",
+p1:"Hamster & Co. erhebt, übermittelt und verkauft keine personenbezogenen Daten.",
+p2:"Das Spiel enthält keine Werbung, keine Analysewerkzeuge und keine In-App-Käufe. Es braucht weder Konto noch Anmeldung.",
+p3:"Deine Spielstände, Punktzahlen und Einstellungen werden nur auf deinem Gerät gespeichert.",
+p4:"Wenn die Android-Sicherung auf deinem Gerät aktiviert ist, kann Android diese Daten in deinem Google-Konto sichern, um sie auf einem neuen Gerät wiederherzustellen. Diese Sicherung wird von Google verwaltet; der Entwickler hat darauf nie Zugriff.",
+p5:"Das Spiel funktioniert ohne Internetverbindung.",
+p6:"Die Challenge-Codes, die du mit Freunden teilst, enthalten nur die Einstellungen eines Spiels und nichts über dich.",
+p7:"Spenden über Ko-fi erfolgen außerhalb des Spiels auf der Website von Ko-fi und unterliegen deren eigener Datenschutzerklärung.",
+p8:"Diese Webseite verwendet keine Cookies und keine Tracker. Sie merkt sich nur die gewählte Sprache in deinem Browser.",
+contact:"Fragen? Schreib an:",
+credits:"Ein Spiel von Marc, angepasst von Willy. Musik: „Carefree“ von Kevin MacLeod (incompetech.com), Lizenz Creative Commons BY 4.0."},
+
+es:{name:"Hámsteres y Cía.",nav_game:"El juego",nav_support:"Apoyar",nav_privacy:"Privacidad",
+tagline:"Un juego de cría acogedor para Android: haz crecer tu criadero mes a mes.",
+cta:"Descargar en Google Play",b1:"Gratis",b2:"Sin anuncios",b3:"Sin compras",b4:"Sin cuenta",
+game_title:"El juego",
+career_t:"Carrera",career_d:"Un criadero sin fin: 20 títulos, pedidos que entregar, jaulas y equipos por desbloquear y una reputación que cuidar.",
+camp_t:"Campaña",camp_d:"Diez niveles en tres capítulos, cada uno con su lección y su reto. ¡Consigue las tres estrellas!",
+classic_t:"Partida clásica",classic_d:"El juego original: 24 meses para acabar lo más rico posible, con un reto del día igual para todos y códigos para compartir.",
+zen_t:"Modo Zen",zen_d:"Sin presión y sin fin: solo el placer de ver crecer tu criadero.",
+more:"Una pequeña mascota te guía al principio y luego te deja decidir. En español, inglés, francés, alemán, italiano y portugués.",
+shots_title:"Capturas",
+support_t:"Apoyar el juego",support_d:"Hámsteres y Cía. es gratis y lo seguirá siendo, sin anuncios ni compras. Si te gusta, puedes invitar a un café al desarrollador. Es una donación: no desbloquea nada en el juego.",
+support_btn:"Donar en Ko-fi",
+privacy_t:"Política de privacidad",updated:"Última actualización: 16 de noviembre de 2026",
+p1:"Hámsteres y Cía. no recoge, transmite ni vende ningún dato personal.",
+p2:"El juego no tiene anuncios, herramientas de análisis ni compras integradas. No necesita cuenta ni registro.",
+p3:"Tus partidas, puntuaciones y ajustes se guardan únicamente en tu dispositivo.",
+p4:"Si la copia de seguridad de Android está activada en tu dispositivo, Android puede copiar estos datos en tu cuenta de Google para restaurarlos en un dispositivo nuevo. Esa copia la gestiona Google; el desarrollador nunca tiene acceso a ella.",
+p5:"El juego funciona sin conexión a Internet.",
+p6:"Los códigos de reto que compartes con tus amigos solo contienen los ajustes de una partida, y nada sobre ti.",
+p7:"Las donaciones en Ko-fi se hacen fuera del juego, en el sitio web de Ko-fi, y se rigen por su propia política de privacidad.",
+p8:"Esta página web no usa cookies ni rastreadores. Solo recuerda el idioma elegido, en tu navegador.",
+contact:"¿Alguna pregunta? Escribe a:",
+credits:"Un juego creado por Marc, adaptado por Willy. Música: «Carefree», de Kevin MacLeod (incompetech.com), licencia Creative Commons BY 4.0."},
+
+it:{name:"Criceti & Co.",nav_game:"Il gioco",nav_support:"Sostieni",nav_privacy:"Privacy",
+tagline:"Un gioco di allevamento accogliente per Android: fai crescere il tuo allevamento, mese dopo mese.",
+cta:"Scarica da Google Play",b1:"Gratis",b2:"Senza pubblicità",b3:"Senza acquisti",b4:"Senza account",
+game_title:"Il gioco",
+career_t:"Carriera",career_d:"Un allevamento senza fine: 20 titoli, ordini da consegnare, gabbie e attrezzature da sbloccare e una reputazione da curare.",
+camp_t:"Campagna",camp_d:"Dieci livelli in tre capitoli, ognuno con la sua lezione e la sua sfida. Punta alle tre stelle!",
+classic_t:"Partita classica",classic_d:"Il gioco originale: 24 mesi per finire il più ricco possibile, con una sfida del giorno uguale per tutti e codici da condividere.",
+zen_t:"Modalità Zen",zen_d:"Senza pressione e senza fine: solo il piacere di veder crescere il tuo allevamento.",
+more:"Una piccola mascotte ti guida all'inizio, poi ti lascia decidere. In italiano, inglese, francese, tedesco, spagnolo e portoghese.",
+shots_title:"Schermate",
+support_t:"Sostieni il gioco",support_d:"Criceti & Co. è gratuito e lo resterà, senza pubblicità e senza acquisti. Se ti piace, puoi offrire un caffè allo sviluppatore. È una donazione: non sblocca nulla nel gioco.",
+support_btn:"Dona su Ko-fi",
+privacy_t:"Informativa sulla privacy",updated:"Ultimo aggiornamento: 16 novembre 2026",
+p1:"Criceti & Co. non raccoglie, non trasmette e non vende alcun dato personale.",
+p2:"Il gioco non contiene pubblicità, strumenti di analisi né acquisti in-app. Non richiede account né registrazione.",
+p3:"Le tue partite, i punteggi e le impostazioni sono salvati solo sul tuo dispositivo.",
+p4:"Se il backup di Android è attivo sul tuo dispositivo, Android può copiare questi dati sul tuo account Google per ripristinarli su un nuovo dispositivo. Questo backup è gestito da Google; lo sviluppatore non vi ha mai accesso.",
+p5:"Il gioco funziona senza connessione a Internet.",
+p6:"I codici sfida che condividi con gli amici contengono solo le impostazioni di una partita, e nulla su di te.",
+p7:"Le donazioni su Ko-fi avvengono fuori dal gioco, sul sito di Ko-fi, e seguono la sua informativa sulla privacy.",
+p8:"Questa pagina web non usa cookie né strumenti di tracciamento. Ricorda solo la lingua scelta, nel tuo browser.",
+contact:"Domande? Scrivi a:",
+credits:"Un gioco creato da Marc, adattato da Willy. Musica: «Carefree» di Kevin MacLeod (incompetech.com), licenza Creative Commons BY 4.0."},
+
+pt:{name:"Hamsters & Cia.",nav_game:"O jogo",nav_support:"Apoiar",nav_privacy:"Privacidade",
+tagline:"Um jogo de criação aconchegante para Android: faça sua criação crescer, mês após mês.",
+cta:"Baixar no Google Play",b1:"Grátis",b2:"Sem anúncios",b3:"Sem compras",b4:"Sem conta",
+game_title:"O jogo",
+career_t:"Carreira",career_d:"Uma criação sem fim: 20 títulos, pedidos para entregar, gaiolas e equipamentos para desbloquear e uma reputação para cuidar.",
+camp_t:"Campanha",camp_d:"Dez níveis em três capítulos, cada um com sua lição e seu desafio. Conquiste as três estrelas!",
+classic_t:"Partida clássica",classic_d:"O jogo original: 24 meses para terminar o mais rico possível, com um desafio do dia igual para todos e códigos para compartilhar.",
+zen_t:"Modo Zen",zen_d:"Sem pressão e sem fim: só o prazer de ver sua criação crescer.",
+more:"Um pequeno mascote guia você no começo e depois deixa você decidir. Em português, inglês, francês, alemão, espanhol e italiano.",
+shots_title:"Capturas de tela",
+support_t:"Apoiar o jogo",support_d:"Hamsters & Cia. é grátis e vai continuar assim, sem anúncios e sem compras. Se você gostar, pode pagar um café para o desenvolvedor. É uma doação: não desbloqueia nada no jogo.",
+support_btn:"Doar no Ko-fi",
+privacy_t:"Política de privacidade",updated:"Última atualização: 16 de novembro de 2026",
+p1:"Hamsters & Cia. não coleta, não transmite e não vende nenhum dado pessoal.",
+p2:"O jogo não tem anúncios, ferramentas de análise nem compras no aplicativo. Não precisa de conta nem de cadastro.",
+p3:"Suas partidas, pontuações e configurações ficam salvas apenas no seu aparelho.",
+p4:"Se o backup do Android estiver ativado no seu aparelho, o Android pode copiar esses dados para a sua conta do Google para restaurá-los em um aparelho novo. Esse backup é gerenciado pelo Google; o desenvolvedor nunca tem acesso a ele.",
+p5:"O jogo funciona sem conexão com a Internet.",
+p6:"Os códigos de desafio que você compartilha com amigos contêm apenas as configurações de uma partida, e nada sobre você.",
+p7:"As doações no Ko-fi são feitas fora do jogo, no site do Ko-fi, e seguem a política de privacidade do próprio Ko-fi.",
+p8:"Esta página não usa cookies nem rastreadores. Ela só guarda o idioma escolhido, no seu navegador.",
+contact:"Alguma dúvida? Escreva para:",
+credits:"Um jogo criado por Marc, adaptado por Willy. Música: “Carefree”, de Kevin MacLeod (incompetech.com), licença Creative Commons BY 4.0."}
+};
+
+function setLang(lang, remember){
+  if(!T[lang]) lang = 'en';
+  var dict = T[lang];
+  document.documentElement.lang = lang === 'pt' ? 'pt-BR' : lang;
+  document.title = dict.name;
+  var nodes = document.querySelectorAll('[data-t]');
+  for(var i=0;i<nodes.length;i++){
+    var k = nodes[i].getAttribute('data-t');
+    if(dict[k]) nodes[i].textContent = dict[k];
+  }
+  var btns = document.querySelectorAll('.langs button');
+  for(var j=0;j<btns.length;j++){
+    btns[j].setAttribute('aria-pressed', btns[j].getAttribute('data-lang') === lang ? 'true' : 'false');
+  }
+  if(remember){ try{ localStorage.setItem('lang', lang); }catch(e){} }
+}
+
+function firstLang(){
+  var m = /[?&]lang=([a-z]{2})/.exec(location.search);
+  if(m && T[m[1]]) return m[1];
+  try{ var s = localStorage.getItem('lang'); if(s && T[s]) return s; }catch(e){}
+  var list = navigator.languages || [navigator.language || 'en'];
+  for(var i=0;i<list.length;i++){
+    var c = String(list[i]).slice(0,2).toLowerCase();
+    if(T[c]) return c;
+  }
+  return 'en';
+}
+
+document.getElementById('play').href = CONFIG.play;
+document.getElementById('kofi').href = CONFIG.kofi;
+var mail = document.getElementById('mail');
+mail.href = 'mailto:' + CONFIG.email;
+mail.textContent = CONFIG.email;
+
+var langButtons = document.querySelectorAll('.langs button');
+for(var b=0;b<langButtons.length;b++){
+  langButtons[b].addEventListener('click', function(){ setLang(this.getAttribute('data-lang'), true); });
+}
+setLang(firstLang(), false);
+
+/* Captures facultatives : captures/1.png … 6.png */
+(function(){
+  var box = document.getElementById('shots'), section = document.getElementById('captures');
+  for(var n=1;n<=6;n++){
+    var img = new Image();
+    img.alt = '';
+    img.hidden = true;
+    img.onload = function(){ this.hidden = false; section.hidden = false; };
+    img.onerror = function(){ this.remove(); };
+    box.appendChild(img);
+    img.src = 'captures/' + n + '.png';
+  }
+})();
+</script>
+</body>
+</html>
